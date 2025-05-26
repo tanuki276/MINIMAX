@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>minimax関数のやり方</title>
   <style>
     body {
@@ -54,6 +54,21 @@
       overflow-x: auto;
       box-shadow: 0 0 10px #0ff2ff44;
     }
+
+    .repo-link {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 0 15px #7fdbff88;
+    }
+
+    .section-title {
+      margin-top: 2rem;
+      color: #82d3ff;
+      text-shadow: 0 0 6px #82d3ff;
+    }
   </style>
 </head>
 <body>
@@ -68,7 +83,7 @@
     <pre><code>def minimax(state, depth, maximizing):
     if depth == 0 or is_terminal(state):
         return evaluate(state)
-    
+
     if maximizing:
         max_eval = float("-inf")
         for child in get_children(state):
@@ -90,13 +105,62 @@
     </ul>
 
     <h2>ゲームへの応用</h2>
-    <p>このminimaxは、<strong>将棋・オセロ・マルバツ・チェス</strong>などすべての2人ゲームに応用可能です。</p>
+    <p>
+      このminimaxは、<strong>将棋・オセロ・マルバツ・チェス</strong>などすべての2人ゲームに応用可能です。
+    </p>
 
-    <hr>
+    <h2 class="section-title">C言語での本格的なminimax関数例</h2>
+    <pre><code>#include &lt;limits.h&gt;
+#include &lt;stdlib.h&gt;
+
+int minimax(
+    void* state,
+    int depth,
+    int maximizingPlayer,
+    GetChildrenFunc get_children,
+    EvaluateFunc evaluate,
+    IsTerminalFunc is_terminal,
+    void** best_child_out
+) {
+    if (depth == 0 || is_terminal(state)) {
+        *best_child_out = NULL;
+        return evaluate(state);
+    }
+
+    void** children = NULL;
+    int child_count = get_children(state, &amp;children);
+
+    if (child_count == 0) {
+        *best_child_out = NULL;
+        return evaluate(state);
+    }
+
+    int best_score = maximizingPlayer ? INT_MIN : INT_MAX;
+    void* best_child = NULL;
+
+    for (int i = 0; i &lt; child_count; i++) {
+        void* child = children[i];
+        void* dummy;
+        int score = minimax(child, depth - 1, !maximizingPlayer, get_children, evaluate, is_terminal, &amp;dummy);
+
+        if ((maximizingPlayer &amp;&amp; score &gt; best_score) || (!maximizingPlayer &amp;&amp; score &lt; best_score)) {
+            best_score = score;
+            best_child = child;
+        }
+    }
+
+    *best_child_out = best_child;
+    return best_score;
+}</code></pre>
+
+    <div class="repo-link">
+      <p>このminimax関数のコードはGitHubで公開中です：</p>
+      <a href="https://github.com/tanuki276/MINIMAX.git" target="_blank">https://github.com/tanuki276/MINIMAX.git</a>
+    </div>
+
+    <hr />
     <p>ご不明点・お問い合わせはこちらから：  
-      <a href="https://otoiawase-gon.vercel.app/contact" target="_blank">
-        お問い合わせフォーム
-      </a>
+      <a href="https://otoiawase-gon.vercel.app/contact" target="_blank">お問い合わせフォーム</a>
     </p>
   </div>
 </body>
